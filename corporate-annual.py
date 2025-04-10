@@ -9,8 +9,8 @@ from statsmodels.graphics.gofplots import qqplot
 DF = pandas.read_excel('corporate.xlsx', sheet_name = 'Annual')
 data = DF.values[:, 1:].astype(float)
 wealth = data[:, 0]
-rate = data[:, 1]/100
-volatility = data[:, 2]
+rate = data[:, 2]/100 #change 2 to 1 to test AAA rates instead of BAA rates
+volatility = data[:, 3]
 returns = numpy.diff(numpy.log(wealth))
 dreturns = returns - rate[:-1]
 N = len(dreturns)
@@ -28,6 +28,8 @@ plt.show()
 plot_acf(abs(resid))
 plt.title('ACF Plot |Residuals| of Simple AR(1)')
 plt.show()
+print('Shapiro-Wilk p = ', stats.shapiro(resid)[1])
+print('Jarque-Bera p = ', stats.jarque_bera(resid)[1])
 
 print('Auto Regression of Rates with VIX')
 RegDF = pandas.DataFrame({'Lag' : rate[:-1]/volatility[1:], 'Volatility': 1, 'Constant' : 1/volatility[1:]})
@@ -43,7 +45,8 @@ plt.show()
 plot_acf(abs(residuals))
 plt.title('ACF Plot |Residuals| of AR with Volatility')
 plt.show()
-print('Shapiro-Wilk p = ', stats.shapiro(residuals))
+print('Shapiro-Wilk p = ', stats.shapiro(residuals)[1])
+print('Jarque-Bera p = ', stats.jarque_bera(residuals)[1])
 
 print('Returns minus rate')
 print('Mean, stdev = ', numpy.mean(dreturns), numpy.std(dreturns))
@@ -56,6 +59,8 @@ plt.show()
 plot_acf(abs(dreturns))
 plt.title('ACF Plot |Returns Minus Rate|')
 plt.show()
+print('Shapiro-Wilk p = ', stats.shapiro(dreturns)[1])
+print('Jarque-Bera p = ', stats.jarque_bera(dreturns)[1])
 
 print('Regression Simple of Returns minus rate vs rate change: Duration')
 Reg = stats.linregress(numpy.diff(rate), dreturns)
@@ -70,6 +75,8 @@ plt.show()
 plot_acf(abs(resid))
 plt.title('ACF Plot |Residuals| of Simple Regression')
 plt.show()
+print('Shapiro-Wilk p = ', stats.shapiro(resid)[1])
+print('Jarque-Bera p = ', stats.jarque_bera(resid)[1])
 
 print('Regression of Returns minus rate with VIX')
 RegDF = pandas.DataFrame({'Duration' : numpy.diff(rate)/volatility[1:], 'Volatility': 1, 'Constant' : 1/volatility[1:]})
@@ -85,4 +92,5 @@ plt.show()
 plot_acf(abs(residuals))
 plt.title('ACF Plot |Residuals| of Regression with Volatility')
 plt.show()
-print('Shapiro-Wilk p = ', stats.shapiro(residuals))
+print('Shapiro-Wilk p = ', stats.shapiro(residuals)[1])
+print('Jarque-Bera p = ', stats.jarque_bera(residuals)[1])
